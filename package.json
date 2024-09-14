@@ -35,6 +35,9 @@
     "webpack-dev-server": "^3.0.0"
   },
   "dependencies": {
+    "election": "file:",
+    "ipfs-api": "^26.1.2",
+    "react-router-dom": "^6.23.1",
     "react-scripts": "^5.0.1"
   }
 }

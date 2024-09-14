@@ -6,9 +6,9 @@ class Table extends React.Component {
       <table class='table'>
         <thead>
           <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Votes</th>
+            <th>번호</th>
+            <th>이름</th>
+            <th>투표수</th>
           </tr>
         </thead>
         <tbody >

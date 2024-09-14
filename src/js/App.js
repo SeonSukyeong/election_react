@@ -1,3 +1,4 @@
+//node.js에서 제공하는 라이브러리
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Web3 from 'web3'
@@ -8,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 class App extends React.Component {
   constructor(props) {
+    //component state 사용 (to manage our app state)
     super(props)
     this.state = {
       account: '0x0',
@@ -18,6 +20,7 @@ class App extends React.Component {
       //컴포넌트들, 앱 상태를 관리하는
     }
 
+    //web3 설정 (react <-> blockchain)
     if (typeof web3 != 'undefined') {
       this.web3Provider = web3.currentProvider
     } else {
@@ -26,19 +29,19 @@ class App extends React.Component {
 
     this.web3 = new Web3(this.web3Provider)
 
-    this.election = TruffleContract(Election)
-    //
+    this.election = TruffleContract(Election)// 중요한 부분!! <generating truffle contract that we can use to interact with>
+    //컨트랙트와 FE의 연동을 위해 많은 사람들이 web3를 그 자체로 사용하지만, 별로 선호하지 않는다. 아래 이유
+    //1. keep setting the address based on environment
+    //2. keep changing the ABI* while you're developing
+    //* ABI = abstract binary interface (generate a contract for EVM, Web3와 같은 FE, truffle contract)
     this.election.setProvider(this.web3Provider)
 
+    //binding functions
     this.castVote = this.castVote.bind(this)//cast vote와 같은 내부 문제를 해결하기 위해서 상위 구성 요소에 바인딩함
     this.watchEvents = this.watchEvents.bind(this)
   }
-  //web3 생성하는 생성자들
 
-  //많은 사람들이 클라이언트 어플리케이션에서 contract 하기 위해 web3자체를 사용하지만
-  //좀 별로인 이유가 대부분 계약 ABI(Abstract Binary Interface)를 파일에 붙여넣는데
-  // 이러면 계약주소가 계속 바뀌잖아 근데 우리가 트러플로 계약을 맺으면서 abi를 제공할 것이고 
- 
+  //blockchain data state와 연동, componentDidMount() = did this component mount and if it did do this stuff
   componentDidMount() {//마운트 기능, 생명주기 같은 건가?
     // TODO: Refactor with promise chain
     this.web3.eth.getCoinbase((err, account) => {
@@ -85,7 +88,7 @@ class App extends React.Component {
   castVote(candidateId) {
     this.setState({ voting: true })
     this.electionInstance.vote(candidateId, { from: this.state.account }).then((result) =>
-      this.setState({ hasVoted: true })
+      this.setState({ hasVoted: true }) //투표 했으면 가져오는 것인가?
     )
   }
 
@@ -95,9 +98,9 @@ class App extends React.Component {
         <div class='col-lg-12 text-center' >
           <h1>선거 결과</h1>
           <br/>
-          { this.state.loading || this.state.voting
+          { this.state.loading || this.state.voting //화면 로딩 또는 투표 중이면
             ? <p class='text-center'>Loading...</p>
-            : <Content
+            : <Content                              //로딩 중이 아니면
                 account={this.state.account}
                 candidates={this.state.candidates}
                 hasVoted={this.state.hasVoted}
